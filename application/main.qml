@@ -38,6 +38,10 @@ Kirigami.ApplicationWindow {
     y: deviceHeight ? Screen.desktopAvailableHeight - height : undefined
 
     color: "black"
+
+    property var rot_origin_x: globalScreenRotation == 90 || globalScreenRotation == 270 ? height/2 : width/2
+    property var rot_origin_y: globalScreenRotation == 90 || globalScreenRotation == 270 ? width/2 : height/2
+
     //HACK!! needs proper api in kirigami
     Component.onCompleted: {
         globalDrawer.handle.handleAnchor = handleAnchor;
@@ -199,9 +203,12 @@ Kirigami.ApplicationWindow {
             }
         }
         Rectangle {
+            height: globalScreenRotation == 90 || globalScreenRotation == 270 ? root.width : root.height
+            width: globalScreenRotation == 90 || globalScreenRotation == 270 ? root.height : root.width
             color: nightSwitch.checked ? "black" : Kirigami.Theme.backgroundColor
-            rotation: globalScreenRotation || 0
-            anchors.fill: parent
+            transform: Rotation { origin.x: root.rot_origin_x; origin.y: root.rot_origin_y; angle: globalScreenRotation }
+            anchors.centerIn: parent
+
             Image {
                 visible: singleSkill.length === 0
                 source: "background.png"
